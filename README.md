@@ -8,81 +8,98 @@
 [FriCAS](https://fricas.github.io) is a general purpose computer algebra
 system (CAS).
 
-In this work-in-progress repository, wrappers to some [Julia](https://julialang.org)
-specific operations are added to FriCAS. It supports SBCL or Clozure CL build but, as of now, only Julia 1.10.0 is
-supported for a SBCL based FriCAS, see [Caveats](#caveats). It should not be considered production-ready.
+In this work-in-progress repository, a C wrapper using libjulia is embedded in FriCAS to support some [Julia](https://julialang.org) based specific operations (for example, system optimized BLAS and LAPACK libraries). It supports SBCL (preferred) and Clozure CL build, but only Julia 1.10.0 and Julia 1.11.0-alpha* or -beta* are supported with SBCL, see [Caveats](#caveats). It must not be considered production-ready.
 
 ## Building and Installing
 
 For general installation instructions see INSTALL. For general documentation
 consult <https://fricas.github.io>.
 
-To build FriCAS with Julia support, a simple
-<code>./configure --enable-julia</code> should do the trick. The required Julia packages are Suppressor, Nemo and SpecialFunctions. If you want to visualize your data, small support is provided using Plots and eventually LaTeXStrings Julia packages . 
+To build FriCAS with Julia support, the <code>julia</code> executable needs to be available in your PATH, and a simple <code>./configure --enable-julia</code> should do the trick. The required Julia packages are Suppressor, Nemo and SpecialFunctions. As of now with Clozure CL [queues](https://github.com/oconnore/queues) is also required. Use installed [quicklisp](https://www.quicklisp.org/beta/) with `queues`, and at configure time, if necessary, use the `--with-quicklisp` option, see the `quicklisp` documentation. If you want to visualize your data using Julia, small support is provided using StatsPlots and eventually the LaTeXStrings Julia packages. See the available FriCAS packages below. 
 
-The <code>julia</code> executable needs to be available in your PATH.
-If you want to add Jupyter support with a SBCL based FriCAS, make sure [hunchentoot](https://edicl.github.io/hunchentoot/) is installed, and as of now on Clozure CL [queues](https://github.com/oconnore/queues) is also required (use installed [quicklisp](https://www.quicklisp.org/beta/) with `queues` at configure time if necessary, see the `quicklisp` documentation).
+If you want to add Jupyter support with a SBCL based FriCAS, make sure [hunchentoot](https://edicl.github.io/hunchentoot/) is installed. On a Debian like system you can add `hunchentoot` with <code>sudo apt install cl-hunchentoot</code> and issue, for example, <code>./configure --enable-gmp --enable-julia --enable-hunchentoot</code>.
 
-On a Debian like system you can add `hunchentoot` with <code>sudo apt install cl-hunchentoot</code>
-and issue, for example,
-<code>./configure --enable-gmp --enable-julia --enable-hunchentoot</code>.
 To know which categories/domains/packages are added to FriCAS issue in the
 FriCAS interpreter <code>)what things julia</code> and/or <code>)what things nemo</code>  or use HyperDoc:
 
 ```
 (1) -> )what things julia
+Operations whose names satisfy the above pattern(s):
+
+juliaCMPrint    juliaCVPrint    juliaIVPrint    juliaMPrint
+juliaVPrint
+
+      To get more information about an operation such as juliaVPrint ,
+      issue the command )display op juliaVPrint
 ------------------------------- Categories --------------------------------
+
+Categories with names matching patterns:
+     julia
+
  JARBPR   JuliaArbitraryPrecision      JMATCAT  JuliaMatrixCategory
- JOBJECT  JuliaObject(only with SBCL)  JRING    JuliaRing
+ JOBJTYP  JuliaObjectType              JRING    JuliaRing
  JTYPE    JuliaType                    JVECCAT  JuliaVectorCategory
 --------------------------------- Domains ---------------------------------
+
+Domains with names matching patterns:
+     julia
+
  JCF64    JuliaComplexF64              JCF64MAT JuliaComplexF64Matrix
  JCF64SMA JuliaComplexF64SquareMatrix  JCF64VEC JuliaComplexF64Vector
- JCFLOAT  JuliaComplexFloat (only with SBCL)
- JF64     JuliaFloat64
- JF64MAT  JuliaFloat64Matrix           JF64SMAT JuliaF64SquareMatrix
- JF64VEC  JuliaFloat64Vector           JFLOAT   JuliaFloat (only with SBCL)
- JI64     JuliaInt64                   JI64VEC  JuliaInt64Vector
- JMATRIX  JuliaMatrix (only with SBCL) JOBJECT- JuliaObject& (only with SBCL)
+ JCFLOAT  JuliaComplexFloat            JDFRAME  JuliaDataFrame
+ JF64     JuliaFloat64                 JF64MAT  JuliaFloat64Matrix
+ JF64SMAT JuliaF64SquareMatrix         JF64VEC  JuliaFloat64Vector
+ JFLOAT   JuliaFloat                   JI64     JuliaInt64
+ JI64VEC  JuliaInt64Vector             JMATRIX  JuliaMatrix
+ JOBJECT  JuliaObject                  JOBJTYP- JuliaObjectType&
  JSTR     JuliaString                  JSYM     JuliaSymbol
- JVECTOR  JuliaVector (only with SBCL)
+ JVECTOR  JuliaVector
 -------------------------------- Packages ---------------------------------
+
+Packages with names matching patterns:
+     julia
+
  JCF64MTF JuliaComplexF64MatrixTranscendentalFunctions
  JCFSF    JuliaComplexFloatSpecialFunctions
  JCLA     JuliaComplexLinearAlgebra    JDRAW    JuliaDrawFunctions
  JF64MTF  JuliaF64MatrixTranscendentalFunctions
  JF64SF   JuliaFloat64SpecialFunctions
  JF64SF2  JuliaFloat64SpecialFunctions2
- JF64VEC2 JuliaFloat64VectorFunctions2
- JFSF     JuliaFloatSpecialFunctions (only with SBCL)
- JFSF2    JuliaFloatSpecialFunctions2 (only with SBCL)
- JPLOT    JuliaPlotFunctions
+ JF64VEC2 JuliaFloat64VectorFunctions2  JFSF     JuliaFloatSpecialFunctions
+ JFSF2    JuliaFloatSpecialFunctions2  JPLOT    JuliaPlotFunctions
  JRLA     JuliaRealLinearAlgebra       JUF      JuliaUtilityFunctions
  JVECTOR2 JuliaVectorFunctions2
---------------- System Commands for User Level: development ---------------
- 
-------------------------- System Command Synonyms -------------------------
-```
-Nemo Categories/Domains/Packages (JuliaObject) are only built using SBCL:
-```
-(1) -> )what things nemo
-------------------------------- Categories --------------------------------
- NRING    NemoRing                     NTYPE    NemoType
---------------------------------- Domains ---------------------------------
- NAN      NemoAlgebraicNumber          NCB      NemoComplexBall
- NCF      NemoComplexField             NECF     NemoExactComplexField
- NFF      NemoFiniteField              NINT     NemoInteger
- NMP      NemoMultivariatePolynomial   NPF      NemoPrimeField
- NRAT     NemoRational                 NRB      NemoRealBall
- NRF      NemoRealField                NUP      NemoUnivariatePolynomial
- NZMOD    NemoIntegerMod
--------------------------------- Packages ---------------------------------
 --------------- System Commands for User Level: development ---------------
 
 System commands at this level matching patterns:
      julia
 
-julia     juliad
+julia     juliad jlapropos jldoc
+```
+Nemo Categories/Domains (JuliaObject):
+```
+(1) -> )what things nemo
+------------------------------- Categories --------------------------------
+
+Categories with names matching patterns:
+     nemo
+
+ NRING    NemoRing                     NTYPE    NemoType
+--------------------------------- Domains ---------------------------------
+
+Domains with names matching patterns:
+     nemo
+
+ NAN      NemoAlgebraicNumber          NCB      NemoComplexBall
+ NCF      NemoComplexField             NECF     NemoExactComplexField
+ NFF      NemoFiniteField              NFR      NemoFactored
+ NINT     NemoInteger                  NMP      NemoMultivariatePolynomial
+ NPF      NemoPrimeField               NRAT     NemoRational
+ NRB      NemoRealBall                 NRF      NemoRealField
+ NUP      NemoUnivariatePolynomial     NZMOD    NemoIntegerMod
+
+```
+```
 ------------------------- System Command Synonyms -------------------------
 
 user-defined synonyms satisfying patterns:
@@ -93,10 +110,10 @@ user-defined synonyms satisfying patterns:
 
 ```
 
-If you want to build and install locally the HTML documentation,
+If you want to build and locally install the HTML documentation,
 you need to install Sphinx. On a Debian like system, to add it, issue in a
 terminal <code>sudo apt install python3 python3-pip && pip3 install -U Sphinx</code>.
-After building FriCAS, and before the installation, issue in the terminal
+After building FriCAS, and before the installation, issue in your terminal
 <code>make htmldoc</code>.
 
 ## Description
@@ -132,4 +149,4 @@ Current development goals:
 
 ## Caveats
 
-Julia support with SBCL is erratic, depending on the Julia version used. The 1.10.0 version seems to have solved problems related to memory management interactions with SBCL, but with Julia 1.10.1 and 1.10.2 problems occur again. Note that with Julia 1.11.0-alpha2, FriCAS seems to work fine. More work needs to be done in this regards. So, if you use SBCL to build FriCAS, imperatively use a version of Julia that is known to be compatible.
+Julia support with FriCAS built with SBCL is/was erratic, depending on the Julia version used. The 1.10.0 version seems to have solved problems related to memory management interactions with SBCL, but with Julia 1.10.1 and 1.10.2 problems occur again. Note that with Julia 1.11.0-alpha* and later, FriCAS seems to work fine again. More work needs to be done in this regard. So, if you use SBCL to build FriCAS, imperatively use a version of Julia that is known to be compatible.
