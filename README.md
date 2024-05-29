@@ -15,34 +15,36 @@ In this work-in-progress repository, a C wrapper using libjulia is embedded in F
 For general installation instructions see INSTALL. For general documentation
 consult <https://fricas.github.io>.
 
-To build FriCAS with Julia support, the <code>julia</code> executable needs to be available in your PATH, and a simple <code>./configure --enable-julia</code> should do the trick. The required Julia packages are Suppressor, Nemo and SpecialFunctions. As of now with Clozure CL [queues](https://github.com/oconnore/queues) is also required. Use installed [quicklisp](https://www.quicklisp.org/beta/) with `queues`, and at configure time, if necessary, use the `--with-quicklisp` option, see the `quicklisp` documentation. If you want to visualize your data using Julia, small support is provided using StatsPlots and eventually the LaTeXStrings Julia packages. See the available FriCAS packages below. 
+To build FriCAS with Julia support, the <code>julia</code> executable needs to be available in your PATH, and a simple <code>./configure --enable-julia</code> should do the trick. The required Julia packages are Suppressor, Nemo and SpecialFunctions. As of now with Clozure CL [queues](https://github.com/oconnore/queues) is also required. Use installed [quicklisp](https://www.quicklisp.org/beta/) with `queues`, and at configure time, if necessary, use the `--with-quicklisp` option, see the `quicklisp` documentation for how to load it and install `queues`. If you want to visualize your data using Julia, small support is provided using StatsPlots and eventually the LaTeXStrings Julia packages. See the available FriCAS packages below. 
 
-If you want to add Jupyter support with a SBCL based FriCAS, make sure [hunchentoot](https://edicl.github.io/hunchentoot/) is installed. On a Debian like system you can add `hunchentoot` with <code>sudo apt install cl-hunchentoot</code> and issue, for example, <code>./configure --enable-gmp --enable-julia --enable-hunchentoot</code>.
+If you want to use [jFriCAS](https://jfricas.readthedocs.io/en/latest/) i.e. Jupyter support for FriCAS built with SBCL, make sure [hunchentoot](https://edicl.github.io/hunchentoot/) is installed. On a Debian like system you can add `hunchentoot` with <code>sudo apt install cl-hunchentoot</code> and issue, for example, <code>./configure --enable-gmp --enable-julia --enable-hunchentoot</code>.
 
 To know which categories/domains/packages are added to FriCAS issue in the
 FriCAS interpreter <code>)what things julia</code> and/or <code>)what things nemo</code>  or use HyperDoc:
 
 ```
 (1) -> )what things julia
+
 Operations whose names satisfy the above pattern(s):
 
-juliaCMPrint    juliaCVPrint    juliaIVPrint    juliaMPrint
-juliaVPrint
-
-      To get more information about an operation such as juliaVPrint ,
-      issue the command )display op juliaVPrint
+juliaCMPrint    juliaCVPrint    juliaIVPrint    juliaMPrint     
+juliaVPrint     
+   
+      To get more information about an operation such as juliaCMPrint ,
+      issue the command )display op juliaCMPrint 
 ------------------------------- Categories --------------------------------
 
 Categories with names matching patterns:
-     julia
+     julia 
 
  JARBPR   JuliaArbitraryPrecision      JMATCAT  JuliaMatrixCategory
  JOBJTYP  JuliaObjectType              JRING    JuliaRing
  JTYPE    JuliaType                    JVECCAT  JuliaVectorCategory
+ JWS      JuliaWolframSymbolic
 --------------------------------- Domains ---------------------------------
 
 Domains with names matching patterns:
-     julia
+     julia 
 
  JCF64    JuliaComplexF64              JCF64MAT JuliaComplexF64Matrix
  JCF64SMA JuliaComplexF64SquareMatrix  JCF64VEC JuliaComplexF64Vector
@@ -53,11 +55,15 @@ Domains with names matching patterns:
  JI64VEC  JuliaInt64Vector             JMATRIX  JuliaMatrix
  JOBJECT  JuliaObject                  JOBJTYP- JuliaObjectType&
  JSTR     JuliaString                  JSYM     JuliaSymbol
- JVECTOR  JuliaVector
+ JVECTOR  JuliaVector                  JWS-     JuliaWolframSymbolic&
+ JWSAPR   JuliaWSAPReal                JWSEXPR  JuliaWSExpression
+ JWSGINT  JuliaWSGaussianInteger       JWSINT   JuliaWSInteger
+ JWSRAT   JuliaWSRational              JWSREAL  JuliaWSReal
+ JWSSYM   JuliaWSSymbol
 -------------------------------- Packages ---------------------------------
 
 Packages with names matching patterns:
-     julia
+     julia 
 
  JCF64MTF JuliaComplexF64MatrixTranscendentalFunctions
  JCFSF    JuliaComplexFloatSpecialFunctions
@@ -75,20 +81,33 @@ System commands at this level matching patterns:
      julia
 
 julia     juliad jlapropos jldoc
+
+------------------------- System Command Synonyms -------------------------
+
+ )ju ............................ )julia
+ )jud ........................... )juliad
+
 ```
 Nemo Categories/Domains (JuliaObject):
+
 ```
 (1) -> )what things nemo
+
+------------------------- System Command Synonyms -------------------------
+
+user-defined synonyms satisfying patterns:
+     ju
+
 ------------------------------- Categories --------------------------------
 
 Categories with names matching patterns:
-     nemo
+     nemo 
 
  NRING    NemoRing                     NTYPE    NemoType
 --------------------------------- Domains ---------------------------------
 
 Domains with names matching patterns:
-     nemo
+     nemo 
 
  NAN      NemoAlgebraicNumber          NCB      NemoComplexBall
  NCF      NemoComplexField             NECF     NemoExactComplexField
@@ -97,17 +116,6 @@ Domains with names matching patterns:
  NPF      NemoPrimeField               NRAT     NemoRational
  NRB      NemoRealBall                 NRF      NemoRealField
  NUP      NemoUnivariatePolynomial     NZMOD    NemoIntegerMod
-
-```
-```
-------------------------- System Command Synonyms -------------------------
-
-user-defined synonyms satisfying patterns:
-     ju
-
- )ju ............................ )julia
- )jud ........................... )juliad
-
 ```
 
 If you want to build and locally install the HTML documentation,
